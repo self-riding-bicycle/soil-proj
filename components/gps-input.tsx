@@ -151,7 +151,7 @@ export function GpsInput() {
                   type="button"
                   onClick={getCurrentLocation}
                   disabled={isGettingLocation}
-                  className="h-9 px-3"
+                  className="h-9 px-3 hover:bg-gray-100"
                   variant="outline"
                   title="Get current location"
                 >
@@ -166,7 +166,7 @@ export function GpsInput() {
                     className="w-full h-9"
                   />
                 </div>
-                <Button type="submit" className="h-9">
+                <Button type="submit" className="h-9 hover:bg-gray-100">
                   <MapPin className="mr-2 h-4 w-4" />
                   Submit
                 </Button>
