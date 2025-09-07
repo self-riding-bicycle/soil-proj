@@ -51,9 +51,10 @@ const TabsList = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "inline-flex h-9 items-center justify-start rounded-lg bg-muted p-1 text-muted-foreground",
+      "inline-flex h-12 items-center justify-start gap-1 rounded-lg p-1",
       className
     )}
+    style={{ backgroundColor: '#d1d5db' }}
     {...props}
   />
 ))
@@ -76,10 +77,27 @@ const TabsTrigger = React.forwardRef<HTMLButtonElement, TabsTriggerProps>(
         aria-selected={isSelected}
         data-state={isSelected ? "active" : "inactive"}
         className={cn(
-          "inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
-          isSelected && "bg-background text-foreground shadow",
+          "inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
           className
         )}
+        style={{
+          backgroundColor: isSelected ? 'white' : 'transparent',
+          color: isSelected ? '#1e40af' : '#6b7280',
+          border: isSelected ? '2px solid #1e40af' : '2px solid transparent',
+          boxShadow: isSelected ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+        }}
+        onMouseEnter={(e) => {
+          if (!isSelected) {
+            e.currentTarget.style.backgroundColor = '#f3f4f6';
+            e.currentTarget.style.borderColor = '#9ca3af';
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (!isSelected) {
+            e.currentTarget.style.backgroundColor = 'transparent';
+            e.currentTarget.style.borderColor = 'transparent';
+          }
+        }}
         onClick={() => context.onValueChange(value)}
         {...props}
       />
