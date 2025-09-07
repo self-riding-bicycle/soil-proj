@@ -34,6 +34,81 @@ export function MainTabs() {
     }
   }
 
+  // Calculate confidence and data based on selected datasets
+  const getAnalysisData = () => {
+    const satelliteOnly = enabledDatasets.satellite && !enabledDatasets.lowFidelity
+    const lowFidelityOnly = !enabledDatasets.satellite && enabledDatasets.lowFidelity
+    const both = enabledDatasets.satellite && enabledDatasets.lowFidelity
+    
+    if (both) {
+      return {
+        confidence: 72,
+        toc: 2.34,
+        activeCarbon: 485,
+        som: 4.03,
+        sequestration: { min: 1.2, max: 1.8 },
+        tocPercentile: 68,
+        acPercentile: 45,
+        somPercentile: 72,
+        seqPercentile: 60,
+        recommendations: [
+          "Consider cover cropping to increase carbon inputs",
+          "Reduce tillage to preserve existing carbon stocks",
+          "Apply compost or biochar to enhance carbon storage"
+        ]
+      }
+    } else if (satelliteOnly) {
+      return {
+        confidence: 62,
+        toc: 2.28,
+        activeCarbon: 470,
+        som: 3.92,
+        sequestration: { min: 1.1, max: 1.6 },
+        tocPercentile: 65,
+        acPercentile: 42,
+        somPercentile: 68,
+        seqPercentile: 55,
+        recommendations: [
+          "Cover cropping recommended based on satellite analysis",
+          "Consider soil testing for more accurate carbon measurements",
+          "Monitor seasonal variations in vegetation cover"
+        ]
+      }
+    } else if (lowFidelityOnly) {
+      return {
+        confidence: 65,
+        toc: 2.41,
+        activeCarbon: 495,
+        som: 4.15,
+        sequestration: { min: 1.3, max: 1.9 },
+        tocPercentile: 70,
+        acPercentile: 48,
+        somPercentile: 74,
+        seqPercentile: 63,
+        recommendations: [
+          "Spectroscopy indicates good carbon levels",
+          "Focus on maintaining current organic matter",
+          "Consider high-fidelity testing for precise measurements"
+        ]
+      }
+    } else {
+      return {
+        confidence: 0,
+        toc: 0,
+        activeCarbon: 0,
+        som: 0,
+        sequestration: { min: 0, max: 0 },
+        tocPercentile: 0,
+        acPercentile: 0,
+        somPercentile: 0,
+        seqPercentile: 0,
+        recommendations: []
+      }
+    }
+  }
+
+  const analysisData = getAnalysisData()
+
   return (
     <div className="container mx-auto px-4 py-6">
       <Tabs defaultValue="local-soil" className="w-full">
@@ -128,7 +203,7 @@ export function MainTabs() {
               
               {/* Main content area - Soil Analysis Results */}
               <div className="flex-1 p-6">
-                {coordinateInfo ? (
+                {coordinateInfo && analysisData.confidence > 0 ? (
                   <div className="flex h-full">
                     {/* Analysis Results - Left Column */}
                     <div className="flex-1 pr-4">
@@ -139,7 +214,7 @@ export function MainTabs() {
                       <div className="bg-gray-50 rounded-lg p-4">
                         <div className="flex justify-between items-start mb-2">
                           <h4 className="text-sm font-medium text-gray-600">Total Organic Carbon (TOC)</h4>
-                          <span className="text-2xl font-bold">2.34%</span>
+                          <span className="text-2xl font-bold">{analysisData.toc}%</span>
                         </div>
                         <p className="text-sm text-gray-600">
                           Moderate carbon content. Recommended range for agricultural soil: 2-4%
@@ -150,7 +225,7 @@ export function MainTabs() {
                       <div className="bg-gray-50 rounded-lg p-4">
                         <div className="flex justify-between items-start mb-2">
                           <h4 className="text-sm font-medium text-gray-600">Active Carbon</h4>
-                          <span className="text-2xl font-bold">485 ppm</span>
+                          <span className="text-2xl font-bold">{analysisData.activeCarbon} ppm</span>
                         </div>
                         <p className="text-sm text-gray-600">
                           Good microbial activity indicator. Optimal range: 400-600 ppm
@@ -161,7 +236,7 @@ export function MainTabs() {
                       <div className="bg-gray-50 rounded-lg p-4">
                         <div className="flex justify-between items-start mb-2">
                           <h4 className="text-sm font-medium text-gray-600">Soil Organic Matter (SOM)</h4>
-                          <span className="text-2xl font-bold">4.03%</span>
+                          <span className="text-2xl font-bold">{analysisData.som}%</span>
                         </div>
                         <p className="text-sm text-gray-600">
                           Healthy organic matter levels. Target range: 3-5% for cropland
@@ -172,7 +247,7 @@ export function MainTabs() {
                       <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
                         <h4 className="text-sm font-medium text-gray-700 mb-2">Carbon Sequestration Potential</h4>
                         <div className="flex items-baseline gap-2">
-                          <span className="text-xl font-bold text-blue-700">1.2-1.8</span>
+                          <span className="text-xl font-bold text-blue-700">{analysisData.sequestration.min}-{analysisData.sequestration.max}</span>
                           <span className="text-sm text-gray-600">tons CO₂/acre/year</span>
                         </div>
                         <p className="text-sm text-gray-600 mt-2">
@@ -184,9 +259,9 @@ export function MainTabs() {
                       <div className="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
                         <h4 className="text-sm font-semibold text-green-800 mb-2">Recommendations</h4>
                         <ul className="text-sm text-gray-700 space-y-1">
-                          <li>• Consider cover cropping to increase carbon inputs</li>
-                          <li>• Reduce tillage to preserve existing carbon stocks</li>
-                          <li>• Apply compost or biochar to enhance carbon storage</li>
+                          {analysisData.recommendations.map((rec, i) => (
+                            <li key={i}>• {rec}</li>
+                          ))}
                         </ul>
                       </div>
                     </div>
@@ -206,10 +281,10 @@ export function MainTabs() {
                             <span>3.2%</span>
                           </div>
                           <div className="relative h-8 bg-gradient-to-r from-red-300 via-yellow-300 to-green-400 rounded-full">
-                            <div className="absolute top-1/2 -translate-y-1/2 left-[68%] w-4 h-4 bg-black rounded-full border-2 border-white shadow-md"></div>
+                            <div className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-black rounded-full border-2 border-white shadow-md" style={{left: `${analysisData.tocPercentile}%`}}></div>
                           </div>
                           <div className="text-xs text-gray-600 text-center mt-1">
-                            Your field: 2.34% (68th percentile)
+                            Your field: {analysisData.toc}% ({analysisData.tocPercentile}th percentile)
                           </div>
                         </div>
                       </div>
@@ -223,10 +298,10 @@ export function MainTabs() {
                             <span>650 ppm</span>
                           </div>
                           <div className="relative h-8 bg-gradient-to-r from-red-300 via-yellow-300 to-green-400 rounded-full">
-                            <div className="absolute top-1/2 -translate-y-1/2 left-[45%] w-4 h-4 bg-black rounded-full border-2 border-white shadow-md"></div>
+                            <div className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-black rounded-full border-2 border-white shadow-md" style={{left: `${analysisData.acPercentile}%`}}></div>
                           </div>
                           <div className="text-xs text-gray-600 text-center mt-1">
-                            Your field: 485 ppm (45th percentile)
+                            Your field: {analysisData.activeCarbon} ppm ({analysisData.acPercentile}th percentile)
                           </div>
                         </div>
                       </div>
@@ -240,10 +315,10 @@ export function MainTabs() {
                             <span>5.0%</span>
                           </div>
                           <div className="relative h-8 bg-gradient-to-r from-red-300 via-yellow-300 to-green-400 rounded-full">
-                            <div className="absolute top-1/2 -translate-y-1/2 left-[72%] w-4 h-4 bg-black rounded-full border-2 border-white shadow-md"></div>
+                            <div className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-black rounded-full border-2 border-white shadow-md" style={{left: `${analysisData.somPercentile}%`}}></div>
                           </div>
                           <div className="text-xs text-gray-600 text-center mt-1">
-                            Your field: 4.03% (72nd percentile)
+                            Your field: {analysisData.som}% ({analysisData.somPercentile}nd percentile)
                           </div>
                         </div>
                       </div>
@@ -257,10 +332,10 @@ export function MainTabs() {
                             <span>2.0 t/a/yr</span>
                           </div>
                           <div className="relative h-8 bg-gradient-to-r from-red-300 via-yellow-300 to-green-400 rounded-full">
-                            <div className="absolute top-1/2 -translate-y-1/2 left-[60%] w-4 h-4 bg-black rounded-full border-2 border-white shadow-md"></div>
+                            <div className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-black rounded-full border-2 border-white shadow-md" style={{left: `${analysisData.seqPercentile}%`}}></div>
                           </div>
                           <div className="text-xs text-gray-600 text-center mt-1">
-                            Your field: 1.5 tons/acre/yr (60th percentile)
+                            Your field: {((analysisData.sequestration.min + analysisData.sequestration.max) / 2).toFixed(1)} tons/acre/yr ({analysisData.seqPercentile}th percentile)
                           </div>
                         </div>
                       </div>
@@ -278,7 +353,7 @@ export function MainTabs() {
                   {/* Confidence Score - Right Column */}
                   <div className="w-32 border-l border-gray-200 pl-6 flex flex-col items-center">
                     <div className="text-center mb-4">
-                      <div className="text-4xl font-bold text-black mb-1">87%</div>
+                      <div className="text-4xl font-bold text-black mb-1">{analysisData.confidence}%</div>
                       <div className="text-xs text-gray-600 uppercase tracking-wide">Confidence</div>
                     </div>
 
@@ -287,7 +362,7 @@ export function MainTabs() {
                       {[...Array(10)].map((_, i) => {
                         const level = 10 - i; // Level from top (1) to bottom (10)
                         const threshold = level * 10;
-                        const confidence = 87;
+                        const confidence = analysisData.confidence;
                         const isActive = confidence >= threshold;
                         
                         let bgColor = 'bg-gray-300';
@@ -312,8 +387,20 @@ export function MainTabs() {
 
                     <div className="mt-4 text-center">
                       <p className="text-xs text-gray-600">Based on</p>
-                      <p className="text-xs font-medium">2 datasets</p>
+                      <p className="text-xs font-medium">
+                        {Object.values(enabledDatasets).filter(Boolean).length} dataset{Object.values(enabledDatasets).filter(Boolean).length !== 1 ? 's' : ''}
+                      </p>
                     </div>
+                  </div>
+                </div>
+              ) : coordinateInfo && analysisData.confidence === 0 ? (
+                <div className="flex items-center justify-center h-full min-h-[300px]">
+                  <div className="text-center">
+                    <CheckCircle2 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">Select Data Sources</h3>
+                    <p className="text-sm text-gray-600 max-w-sm">
+                      Please select at least one data source from the left to view soil analysis
+                    </p>
                   </div>
                 </div>
               ) : (
