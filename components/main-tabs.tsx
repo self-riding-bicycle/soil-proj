@@ -1,28 +1,47 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { CheckCircle2, XCircle, MapPin } from "lucide-react"
 import { useLocation } from "@/contexts/location-context"
+import { useSoilData } from "@/hooks/use-soil-data"
 
 export function MainTabs() {
   const { coordinateInfo } = useLocation()
-  // Data availability (what we have)
-  const dataAvailability = {
-    satellite: true,      // Always available
-    lowFidelity: true,    // Available in this example
-    highFidelity: false   // Not available in this example
+  
+  // Fetch soil data from API
+  const { data: soilData, loading, error } = useSoilData(
+    coordinateInfo?.lat ?? null,
+    coordinateInfo?.lng ?? null
+  )
+  
+  // Data availability from API or defaults
+  const dataAvailability = soilData?.dataAvailability ?? {
+    satellite: true,
+    lowFidelity: false,
+    highFidelity: false
   }
 
   // Data usage toggles (what we want to use in analysis)
   const [enabledDatasets, setEnabledDatasets] = useState({
-    satellite: true,      // Enabled by default
-    lowFidelity: true,    // Enabled by default if available
-    highFidelity: false   // Disabled (not available)
+    satellite: true,
+    lowFidelity: false,
+    highFidelity: false
   })
+  
+  // Update enabled datasets when data availability changes
+  useEffect(() => {
+    if (soilData) {
+      setEnabledDatasets({
+        satellite: soilData.dataAvailability.satellite,
+        lowFidelity: soilData.dataAvailability.lowFidelity,
+        highFidelity: soilData.dataAvailability.highFidelity
+      })
+    }
+  }, [soilData])
 
   const handleDatasetToggle = (dataset: keyof typeof enabledDatasets) => {
     // Only allow toggling if data is available
@@ -34,13 +53,43 @@ export function MainTabs() {
     }
   }
 
-  // Calculate confidence and data based on selected datasets
+  // Calculate confidence and data based on selected datasets and API data
   const getAnalysisData = () => {
-    const satelliteOnly = enabledDatasets.satellite && !enabledDatasets.lowFidelity
-    const lowFidelityOnly = !enabledDatasets.satellite && enabledDatasets.lowFidelity
-    const both = enabledDatasets.satellite && enabledDatasets.lowFidelity
+    const satelliteOnly = enabledDatasets.satellite && !enabledDatasets.lowFidelity && !enabledDatasets.highFidelity
+    const lowFidelityOnly = !enabledDatasets.satellite && enabledDatasets.lowFidelity && !enabledDatasets.highFidelity
+    const highFidelityOnly = !enabledDatasets.satellite && !enabledDatasets.lowFidelity && enabledDatasets.highFidelity
+    const hasMultiple = [enabledDatasets.satellite, enabledDatasets.lowFidelity, enabledDatasets.highFidelity].filter(Boolean).length > 1
     
-    if (both) {
+    // If we have API data, use it
+    if (soilData) {
+      // Calculate confidence based on selected datasets
+      let confidence = 0
+      if (enabledDatasets.highFidelity && dataAvailability.highFidelity) {
+        confidence = soilData.confidence.highFidelity
+      } else if (hasMultiple) {
+        confidence = soilData.confidence.combined
+      } else if (enabledDatasets.satellite) {
+        confidence = soilData.confidence.satellite
+      } else if (enabledDatasets.lowFidelity) {
+        confidence = soilData.confidence.lowFidelity
+      }
+      
+      return {
+        confidence,
+        toc: soilData.soilMetrics.toc.value,
+        activeCarbon: soilData.soilMetrics.activeCarbon.value,
+        som: soilData.soilMetrics.som.value,
+        sequestration: soilData.sequestrationPotential,
+        tocPercentile: soilData.nearbyComparison.tocPercentile,
+        acPercentile: soilData.nearbyComparison.activeCarbonPercentile,
+        somPercentile: soilData.nearbyComparison.somPercentile,
+        seqPercentile: soilData.nearbyComparison.seqPercentile,
+        recommendations: soilData.recommendations
+      }
+    }
+    
+    // Fallback to default data if no API data
+    if (hasMultiple) {
       return {
         confidence: 72,
         toc: 2.34,
@@ -203,7 +252,16 @@ export function MainTabs() {
               
               {/* Main content area - Soil Analysis Results */}
               <div className="flex-1 p-6">
-                {coordinateInfo && analysisData.confidence > 0 ? (
+                {loading ? (
+                  <div className="flex items-center justify-center h-full min-h-[300px]">
+                    <div className="text-center">
+                      <div className="animate-pulse">
+                        <MapPin className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                        <p className="text-lg text-gray-500">Loading soil data...</p>
+                      </div>
+                    </div>
+                  </div>
+                ) : coordinateInfo && analysisData.confidence > 0 ? (
                   <div className="flex h-full">
                     {/* Analysis Results - Left Column */}
                     <div className="flex-1 pr-4">
@@ -432,11 +490,11 @@ export function MainTabs() {
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
                       <span className="text-gray-600">Latitude: </span>
-                      <span className="font-medium">{coordinateInfo.lat.toFixed(6)}</span>
+                      <span className="font-medium">{coordinateInfo.lat.toFixed(5)}</span>
                     </div>
                     <div>
                       <span className="text-gray-600">Longitude: </span>
-                      <span className="font-medium">{coordinateInfo.lng.toFixed(6)}</span>
+                      <span className="font-medium">{coordinateInfo.lng.toFixed(5)}</span>
                     </div>
                     <div className="col-span-2">
                       <span className="text-gray-600">Location: </span>

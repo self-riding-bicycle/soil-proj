@@ -60,8 +60,8 @@ export function GpsInput() {
     
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        const lat = position.coords.latitude
-        const lng = position.coords.longitude
+        const lat = parseFloat(position.coords.latitude.toFixed(5))
+        const lng = parseFloat(position.coords.longitude.toFixed(5))
         
         // Set the coordinates in the input field
         setCoordinates(`${lat}, ${lng}`)
@@ -103,8 +103,8 @@ export function GpsInput() {
     const parts = cleanedCoords.split(/[,\s]+/).filter(p => p.length > 0)
     
     if (parts.length === 2) {
-      const lat = parseFloat(parts[0])
-      const lng = parseFloat(parts[1])
+      const lat = parseFloat(parseFloat(parts[0]).toFixed(5))
+      const lng = parseFloat(parseFloat(parts[1]).toFixed(5))
       
       if (!isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
         const location = getApproximateLocation(lat, lng)
@@ -164,11 +164,11 @@ export function GpsInput() {
               <div className="text-sm space-y-0.5 pl-2">
                 <div className="flex gap-4">
                   <span className="text-muted-foreground">Latitude:</span>
-                  <span className="font-medium">{coordinateInfo.lat.toFixed(4)}</span>
+                  <span className="font-medium">{coordinateInfo.lat.toFixed(5)}</span>
                 </div>
                 <div className="flex gap-4">
                   <span className="text-muted-foreground">Longitude:</span>
-                  <span className="font-medium">{coordinateInfo.lng.toFixed(4)}</span>
+                  <span className="font-medium">{coordinateInfo.lng.toFixed(5)}</span>
                 </div>
                 <div className="flex gap-4">
                   <span className="text-muted-foreground">Location:</span>
