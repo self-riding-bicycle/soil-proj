@@ -4,22 +4,14 @@ import { useState } from "react"
 import { MapPin, Compass } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-
-interface CoordinateInfo {
-  lat: number
-  lng: number
-  country?: string
-  state?: string
-  city?: string
-  region?: string
-}
+import { useLocation } from "@/contexts/location-context"
 
 export function GpsInput() {
   const [coordinates, setCoordinates] = useState("")
-  const [coordinateInfo, setCoordinateInfo] = useState<CoordinateInfo | null>(null)
   const [isGettingLocation, setIsGettingLocation] = useState(false)
+  const { coordinateInfo, setCoordinateInfo } = useLocation()
 
-  const getApproximateLocation = (lat: number, lng: number): Partial<CoordinateInfo> => {
+  const getApproximateLocation = (lat: number, lng: number) => {
     // Basic location approximation based on coordinates
     // This is a simplified version - in production, use a proper geocoding API
     

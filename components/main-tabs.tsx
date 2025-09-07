@@ -3,9 +3,11 @@
 import { useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Checkbox } from "@/components/ui/checkbox"
-import { CheckCircle2, XCircle } from "lucide-react"
+import { CheckCircle2, XCircle, MapPin } from "lucide-react"
+import { useLocation } from "@/contexts/location-context"
 
 export function MainTabs() {
+  const { coordinateInfo } = useLocation()
   // Data availability (what we have)
   const dataAvailability = {
     satellite: true,      // Always available
@@ -122,10 +124,11 @@ export function MainTabs() {
               
               {/* Main content area - Soil Analysis Results */}
               <div className="flex-1 p-6">
-                <div className="flex h-full">
-                  {/* Analysis Results - Center */}
-                  <div className="flex-1 pr-6">
-                    <h3 className="text-lg font-semibold mb-4">Soil Carbon Analysis</h3>
+                {coordinateInfo ? (
+                  <div className="flex h-full">
+                    {/* Analysis Results - Center */}
+                    <div className="flex-1 pr-6">
+                      <h3 className="text-lg font-semibold mb-4">Soil Carbon Analysis</h3>
                     
                     <div className="space-y-4">
                       {/* Total Organic Carbon */}
@@ -195,16 +198,18 @@ export function MainTabs() {
                     {/* LED Visualization */}
                     <div className="flex flex-col gap-1">
                       {[...Array(10)].map((_, i) => {
-                        const threshold = (10 - i) * 10;
+                        const level = 10 - i; // Level from top (1) to bottom (10)
+                        const threshold = level * 10;
                         const confidence = 87;
                         const isActive = confidence >= threshold;
                         
                         let bgColor = 'bg-gray-300';
                         if (isActive) {
-                          if (threshold > 80) bgColor = 'bg-green-500';
-                          else if (threshold > 60) bgColor = 'bg-yellow-400';
-                          else if (threshold > 40) bgColor = 'bg-orange-400';
-                          else bgColor = 'bg-red-500';
+                          // Colors from bottom up (like a VU meter)
+                          if (level <= 6) bgColor = 'bg-green-500';      // Bottom 6 bars are green
+                          else if (level <= 8) bgColor = 'bg-yellow-400'; // Next 2 bars are yellow
+                          else if (level <= 9) bgColor = 'bg-orange-400'; // Next 1 bar is orange
+                          else bgColor = 'bg-red-500';                    // Top bar is red
                         }
                         
                         return (
@@ -224,6 +229,17 @@ export function MainTabs() {
                     </div>
                   </div>
                 </div>
+              ) : (
+                <div className="flex items-center justify-center h-full min-h-[300px]">
+                  <div className="text-center">
+                    <MapPin className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">No Location Selected</h3>
+                    <p className="text-sm text-gray-600 max-w-sm">
+                      Enter GPS coordinates above to view soil carbon analysis for your location
+                    </p>
+                  </div>
+                </div>
+              )}
               </div>
             </div>
           </div>
