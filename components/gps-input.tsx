@@ -85,10 +85,11 @@ export function GpsInput() {
 
   return (
     <div className="border-b bg-muted/30">
-      <div className="container mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Input Section */}
-          <div>
+      <div className="container mx-auto px-4 py-3">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {/* Left Side: Input and Location Info */}
+          <div className="space-y-2">
+            {/* Input Section */}
             <form onSubmit={handleSubmit} className="flex gap-2">
               <div className="flex-1">
                 <Input
@@ -96,20 +97,18 @@ export function GpsInput() {
                   placeholder="Enter GPS coordinates (e.g., 37.7749, -122.4194)"
                   value={coordinates}
                   onChange={(e) => setCoordinates(e.target.value)}
-                  className="w-full"
+                  className="w-full h-9"
                 />
               </div>
-              <Button type="submit">
+              <Button type="submit" className="h-9">
                 <MapPin className="mr-2 h-4 w-4" />
                 Submit
               </Button>
             </form>
-          </div>
 
-          {/* Summary Section */}
-          <div className="flex items-center">
+            {/* Location Summary Below Input */}
             {coordinateInfo ? (
-              <div className="text-sm space-y-1">
+              <div className="text-sm space-y-0.5 pl-2">
                 <div className="flex gap-4">
                   <span className="text-muted-foreground">Latitude:</span>
                   <span className="font-medium">{coordinateInfo.lat.toFixed(4)}</span>
@@ -131,9 +130,38 @@ export function GpsInput() {
                 </div>
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground pl-2">
                 Enter GPS coordinates to see location details
               </p>
+            )}
+          </div>
+
+          {/* Right Side: Map */}
+          <div className="flex items-center justify-end">
+            {coordinateInfo && (
+              <div className="relative overflow-hidden rounded-lg border shadow-sm bg-gray-100">
+                <iframe
+                  width="400"
+                  height="100"
+                  frameBorder="0"
+                  scrolling="no"
+                  marginHeight={0}
+                  marginWidth={0}
+                  src={`https://www.openstreetmap.org/export/embed.html?bbox=${coordinateInfo.lng-0.02},${coordinateInfo.lat-0.015},${coordinateInfo.lng+0.02},${coordinateInfo.lat+0.015}&layer=mapnik&marker=${coordinateInfo.lat},${coordinateInfo.lng}`}
+                  style={{ border: 0 }}
+                  title={`Map showing location at ${coordinateInfo.lat}, ${coordinateInfo.lng}`}
+                />
+                <div className="absolute bottom-1 right-1 bg-white/90 px-1 py-0.5 rounded text-xs">
+                  <a 
+                    href={`https://www.openstreetmap.org/?mlat=${coordinateInfo.lat}&mlon=${coordinateInfo.lng}#map=14/${coordinateInfo.lat}/${coordinateInfo.lng}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-800"
+                  >
+                    View larger
+                  </a>
+                </div>
+              </div>
             )}
           </div>
         </div>
