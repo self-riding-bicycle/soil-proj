@@ -11,32 +11,75 @@ interface CoordinateInfo {
   country?: string
   state?: string
   city?: string
+  region?: string
 }
 
 export function GpsInput() {
   const [coordinates, setCoordinates] = useState("")
   const [coordinateInfo, setCoordinateInfo] = useState<CoordinateInfo | null>(null)
 
+  const getApproximateLocation = (lat: number, lng: number): Partial<CoordinateInfo> => {
+    // Basic location approximation based on coordinates
+    // This is a simplified version - in production, use a proper geocoding API
+    
+    // US Regions (very approximate)
+    if (lat >= 24 && lat <= 49 && lng >= -125 && lng <= -66) {
+      // Within continental US bounds
+      if (lat >= 40 && lat <= 43 && lng >= -72 && lng <= -69) {
+        return {
+          country: "United States",
+          state: "Massachusetts",
+          region: "Cape Cod area"
+        }
+      } else if (lat >= 36 && lat <= 38 && lng >= -123 && lng <= -121) {
+        return {
+          country: "United States", 
+          state: "California",
+          city: "San Francisco Bay Area"
+        }
+      } else if (lat >= 40 && lat <= 41 && lng >= -74.5 && lng <= -73.5) {
+        return {
+          country: "United States",
+          state: "New York",
+          city: "New York City"
+        }
+      } else {
+        return {
+          country: "United States",
+          region: "Location requires geocoding API"
+        }
+      }
+    }
+    
+    return {
+      country: "Unknown",
+      region: "Coordinates outside mapped regions"
+    }
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
-    // Parse coordinates (format: "lat, lng" from Google Maps)
-    const parts = coordinates.split(",").map(p => p.trim())
+    // Parse coordinates - handle both comma and space separated formats
+    const cleanedCoords = coordinates.replace(/[^\d\s,.-]/g, '')
+    const parts = cleanedCoords.split(/[,\s]+/).filter(p => p.length > 0)
+    
     if (parts.length === 2) {
       const lat = parseFloat(parts[0])
       const lng = parseFloat(parts[1])
       
-      if (!isNaN(lat) && !isNaN(lng)) {
-        // For now, just set the coordinates
-        // In a real app, you'd call a geocoding API here
+      if (!isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
+        const location = getApproximateLocation(lat, lng)
         setCoordinateInfo({
           lat,
           lng,
-          country: "United States",
-          state: "California",
-          city: "San Francisco"
+          ...location
         })
+      } else {
+        alert("Invalid coordinates. Latitude must be between -90 and 90, Longitude between -180 and 180")
       }
+    } else {
+      alert("Please enter coordinates in format: latitude, longitude")
     }
   }
 
@@ -78,7 +121,12 @@ export function GpsInput() {
                 <div className="flex gap-4">
                   <span className="text-muted-foreground">Location:</span>
                   <span className="font-medium">
-                    {coordinateInfo.city}, {coordinateInfo.state}, {coordinateInfo.country}
+                    {[
+                      coordinateInfo.city,
+                      coordinateInfo.region,
+                      coordinateInfo.state,
+                      coordinateInfo.country
+                    ].filter(Boolean).join(", ")}
                   </span>
                 </div>
               </div>
