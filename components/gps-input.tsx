@@ -174,7 +174,7 @@ export function GpsInput() {
             </div>
 
             {/* Location Summary Below Input */}
-            {coordinateInfo ? (
+            {coordinateInfo && (
               <div className="text-sm space-y-0.5 pl-2">
                 <div className="flex gap-4">
                   <span className="text-muted-foreground">Latitude:</span>
@@ -196,10 +196,6 @@ export function GpsInput() {
                   </span>
                 </div>
               </div>
-            ) : (
-              <p className="text-sm text-muted-foreground pl-2">
-                Enter GPS coordinates to see location details
-              </p>
             )}
           </div>
 
