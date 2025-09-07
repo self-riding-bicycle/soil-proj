@@ -120,9 +120,110 @@ export function MainTabs() {
                 </div>
               </div>
               
-              {/* Main content area - placeholder for future content */}
+              {/* Main content area - Soil Analysis Results */}
               <div className="flex-1 p-6">
-                {/* Content will go here */}
+                <div className="flex h-full">
+                  {/* Analysis Results - Center */}
+                  <div className="flex-1 pr-6">
+                    <h3 className="text-lg font-semibold mb-4">Soil Carbon Analysis</h3>
+                    
+                    <div className="space-y-4">
+                      {/* Total Organic Carbon */}
+                      <div className="bg-gray-50 rounded-lg p-4">
+                        <div className="flex justify-between items-start mb-2">
+                          <h4 className="text-sm font-medium text-gray-600">Total Organic Carbon (TOC)</h4>
+                          <span className="text-2xl font-bold">2.34%</span>
+                        </div>
+                        <p className="text-sm text-gray-600">
+                          Moderate carbon content. Recommended range for agricultural soil: 2-4%
+                        </p>
+                      </div>
+
+                      {/* Active Carbon */}
+                      <div className="bg-gray-50 rounded-lg p-4">
+                        <div className="flex justify-between items-start mb-2">
+                          <h4 className="text-sm font-medium text-gray-600">Active Carbon</h4>
+                          <span className="text-2xl font-bold">485 ppm</span>
+                        </div>
+                        <p className="text-sm text-gray-600">
+                          Good microbial activity indicator. Optimal range: 400-600 ppm
+                        </p>
+                      </div>
+
+                      {/* Soil Organic Matter */}
+                      <div className="bg-gray-50 rounded-lg p-4">
+                        <div className="flex justify-between items-start mb-2">
+                          <h4 className="text-sm font-medium text-gray-600">Soil Organic Matter (SOM)</h4>
+                          <span className="text-2xl font-bold">4.03%</span>
+                        </div>
+                        <p className="text-sm text-gray-600">
+                          Healthy organic matter levels. Target range: 3-5% for cropland
+                        </p>
+                      </div>
+
+                      {/* Carbon Sequestration Potential */}
+                      <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                        <h4 className="text-sm font-medium text-gray-700 mb-2">Carbon Sequestration Potential</h4>
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-xl font-bold text-blue-700">1.2-1.8</span>
+                          <span className="text-sm text-gray-600">tons CO₂/acre/year</span>
+                        </div>
+                        <p className="text-sm text-gray-600 mt-2">
+                          With recommended practices, this field could sequester additional carbon
+                        </p>
+                      </div>
+
+                      {/* Recommendations */}
+                      <div className="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
+                        <h4 className="text-sm font-semibold text-green-800 mb-2">Recommendations</h4>
+                        <ul className="text-sm text-gray-700 space-y-1">
+                          <li>• Consider cover cropping to increase carbon inputs</li>
+                          <li>• Reduce tillage to preserve existing carbon stocks</li>
+                          <li>• Apply compost or biochar to enhance carbon storage</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Confidence Score - Right Column */}
+                  <div className="w-32 border-l border-gray-200 pl-6 flex flex-col items-center">
+                    <div className="text-center mb-4">
+                      <div className="text-4xl font-bold text-black mb-1">87%</div>
+                      <div className="text-xs text-gray-600 uppercase tracking-wide">Confidence</div>
+                    </div>
+
+                    {/* LED Visualization */}
+                    <div className="flex flex-col gap-1">
+                      {[...Array(10)].map((_, i) => {
+                        const threshold = (10 - i) * 10;
+                        const confidence = 87;
+                        const isActive = confidence >= threshold;
+                        
+                        let bgColor = 'bg-gray-300';
+                        if (isActive) {
+                          if (threshold > 80) bgColor = 'bg-green-500';
+                          else if (threshold > 60) bgColor = 'bg-yellow-400';
+                          else if (threshold > 40) bgColor = 'bg-orange-400';
+                          else bgColor = 'bg-red-500';
+                        }
+                        
+                        return (
+                          <div
+                            key={i}
+                            className={`w-16 h-3 rounded-sm ${bgColor} ${
+                              isActive ? 'shadow-sm' : ''
+                            }`}
+                          />
+                        );
+                      })}
+                    </div>
+
+                    <div className="mt-4 text-center">
+                      <p className="text-xs text-gray-600">Based on</p>
+                      <p className="text-xs font-medium">2 datasets</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
