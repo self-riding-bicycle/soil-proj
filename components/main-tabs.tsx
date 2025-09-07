@@ -48,8 +48,9 @@ export function MainTabs() {
           <div className="rounded-lg border min-h-[400px] overflow-hidden">
             <div className="flex h-full min-h-[400px]">
               {/* Dataset selection column */}
-              <div className="p-6 pr-8 border-r border-gray-200 min-h-full">
-                <div className="space-y-4">
+              {coordinateInfo && (
+                <div className="p-6 pr-8 border-r border-gray-200 min-h-full">
+                  <div className="space-y-4">
                   {/* Satellite Data */}
                   <div className="flex items-center space-x-3">
                     {dataAvailability.satellite ? (
@@ -122,7 +123,8 @@ export function MainTabs() {
                     </label>
                   </div>
                 </div>
-              </div>
+                </div>
+              )}
               
               {/* Main content area - Soil Analysis Results */}
               <div className="flex-1 p-6">

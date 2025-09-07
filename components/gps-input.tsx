@@ -66,13 +66,7 @@ export function GpsInput() {
         // Set the coordinates in the input field
         setCoordinates(`${lat}, ${lng}`)
         
-        // Process the location
-        const location = getApproximateLocation(lat, lng)
-        setCoordinateInfo({
-          lat,
-          lng,
-          ...location
-        })
+        // Don't process the location automatically - wait for submit
         
         setIsGettingLocation(false)
       },
