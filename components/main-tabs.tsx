@@ -130,8 +130,8 @@ export function MainTabs() {
               <div className="flex-1 p-6">
                 {coordinateInfo ? (
                   <div className="flex h-full">
-                    {/* Analysis Results - Center */}
-                    <div className="flex-1 pr-6">
+                    {/* Analysis Results - Left Column */}
+                    <div className="flex-1 pr-4">
                       <h3 className="text-lg font-semibold mb-4">Soil Carbon Analysis</h3>
                     
                     <div className="space-y-4">
@@ -188,6 +188,89 @@ export function MainTabs() {
                           <li>• Reduce tillage to preserve existing carbon stocks</li>
                           <li>• Apply compost or biochar to enhance carbon storage</li>
                         </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Comparison Column - Middle */}
+                  <div className="flex-1 px-4 border-l border-gray-200">
+                    <h3 className="text-lg font-semibold mb-4">How You Compare to Nearby Fields</h3>
+                    
+                    <div className="space-y-4">
+                      {/* TOC Comparison */}
+                      <div className="bg-gray-50 rounded-lg p-4">
+                        <h4 className="text-sm font-medium text-gray-600 mb-2">Total Organic Carbon (TOC)</h4>
+                        <div className="space-y-2">
+                          <div className="flex justify-between text-xs text-gray-500">
+                            <span>1.5%</span>
+                            <span>3.2%</span>
+                          </div>
+                          <div className="relative h-8 bg-gradient-to-r from-red-300 via-yellow-300 to-green-400 rounded-full">
+                            <div className="absolute top-1/2 -translate-y-1/2 left-[68%] w-4 h-4 bg-black rounded-full border-2 border-white shadow-md"></div>
+                          </div>
+                          <div className="text-xs text-gray-600 text-center mt-1">
+                            Your field: 2.34% (68th percentile)
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Active Carbon Comparison */}
+                      <div className="bg-gray-50 rounded-lg p-4">
+                        <h4 className="text-sm font-medium text-gray-600 mb-2">Active Carbon</h4>
+                        <div className="space-y-2">
+                          <div className="flex justify-between text-xs text-gray-500">
+                            <span>350 ppm</span>
+                            <span>650 ppm</span>
+                          </div>
+                          <div className="relative h-8 bg-gradient-to-r from-red-300 via-yellow-300 to-green-400 rounded-full">
+                            <div className="absolute top-1/2 -translate-y-1/2 left-[45%] w-4 h-4 bg-black rounded-full border-2 border-white shadow-md"></div>
+                          </div>
+                          <div className="text-xs text-gray-600 text-center mt-1">
+                            Your field: 485 ppm (45th percentile)
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* SOM Comparison */}
+                      <div className="bg-gray-50 rounded-lg p-4">
+                        <h4 className="text-sm font-medium text-gray-600 mb-2">Soil Organic Matter (SOM)</h4>
+                        <div className="space-y-2">
+                          <div className="flex justify-between text-xs text-gray-500">
+                            <span>2.5%</span>
+                            <span>5.0%</span>
+                          </div>
+                          <div className="relative h-8 bg-gradient-to-r from-red-300 via-yellow-300 to-green-400 rounded-full">
+                            <div className="absolute top-1/2 -translate-y-1/2 left-[72%] w-4 h-4 bg-black rounded-full border-2 border-white shadow-md"></div>
+                          </div>
+                          <div className="text-xs text-gray-600 text-center mt-1">
+                            Your field: 4.03% (72nd percentile)
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Sequestration Comparison */}
+                      <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                        <h4 className="text-sm font-medium text-gray-700 mb-2">Carbon Sequestration Rate</h4>
+                        <div className="space-y-2">
+                          <div className="flex justify-between text-xs text-gray-500">
+                            <span>0.5 t/a/yr</span>
+                            <span>2.0 t/a/yr</span>
+                          </div>
+                          <div className="relative h-8 bg-gradient-to-r from-red-300 via-yellow-300 to-green-400 rounded-full">
+                            <div className="absolute top-1/2 -translate-y-1/2 left-[60%] w-4 h-4 bg-black rounded-full border-2 border-white shadow-md"></div>
+                          </div>
+                          <div className="text-xs text-gray-600 text-center mt-1">
+                            Your field: 1.5 tons/acre/yr (60th percentile)
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Performance Summary */}
+                      <div className="mt-4 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                        <h4 className="text-sm font-semibold text-yellow-800 mb-2">Overall Performance</h4>
+                        <p className="text-sm text-gray-700">
+                          Your field ranks in the <span className="font-bold">top 30%</span> for carbon metrics among 47 similar fields within 10 miles.
+                        </p>
                       </div>
                     </div>
                   </div>
