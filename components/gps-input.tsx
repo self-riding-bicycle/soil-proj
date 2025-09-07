@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { MapPin, Compass } from "lucide-react"
+import { MapPin, Compass, FlaskConical } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useLocation } from "@/contexts/location-context"
@@ -48,6 +48,11 @@ export function GpsInput() {
       country: "Unknown",
       region: "Coordinates outside mapped regions"
     }
+  }
+
+  const setDemoCoordinates = () => {
+    // Set coordinates known to have real data (rounded to 5 decimals)
+    setCoordinates("41.61661, -70.57462")
   }
 
   const getCurrentLocation = () => {
@@ -152,6 +157,15 @@ export function GpsInput() {
                     className="w-full h-9"
                   />
                 </div>
+                <Button
+                  type="button"
+                  onClick={setDemoCoordinates}
+                  className="h-9 px-3 hover:bg-gray-100"
+                  variant="outline"
+                  title="Use demo coordinates with real data"
+                >
+                  <FlaskConical className="h-4 w-4" />
+                </Button>
                 <Button type="submit" className="h-9 hover:bg-gray-100">
                   <MapPin className="mr-2 h-4 w-4" />
                   Submit

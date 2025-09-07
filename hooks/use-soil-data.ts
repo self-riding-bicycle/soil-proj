@@ -76,6 +76,22 @@ export function useSoilData(latitude: number | null, longitude: number | null) {
         }
 
         const soilData = await response.json()
+        
+        // Log the API response to browser console
+        console.log('Soil Data API Response:', {
+          coordinates: { latitude, longitude },
+          hasRealData: soilData.hasRealData,
+          dataSource: soilData.dataSource,
+          dataAvailability: soilData.dataAvailability,
+          metrics: {
+            toc: soilData.soilMetrics?.toc?.value,
+            activeCarbon: soilData.soilMetrics?.activeCarbon?.value,
+            som: soilData.soilMetrics?.som?.value
+          },
+          confidence: soilData.confidence,
+          fullResponse: soilData
+        })
+        
         setData(soilData)
       } catch (err) {
         console.error('Error fetching soil data:', err)
