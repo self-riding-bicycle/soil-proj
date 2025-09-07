@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { MapPin } from "lucide-react"
+import { MapPin, Compass } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
@@ -17,6 +17,7 @@ interface CoordinateInfo {
 export function GpsInput() {
   const [coordinates, setCoordinates] = useState("")
   const [coordinateInfo, setCoordinateInfo] = useState<CoordinateInfo | null>(null)
+  const [isGettingLocation, setIsGettingLocation] = useState(false)
 
   const getApproximateLocation = (lat: number, lng: number): Partial<CoordinateInfo> => {
     // Basic location approximation based on coordinates
@@ -57,6 +58,57 @@ export function GpsInput() {
     }
   }
 
+  const getCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser")
+      return
+    }
+
+    setIsGettingLocation(true)
+    
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude
+        const lng = position.coords.longitude
+        
+        // Set the coordinates in the input field
+        setCoordinates(`${lat}, ${lng}`)
+        
+        // Process the location
+        const location = getApproximateLocation(lat, lng)
+        setCoordinateInfo({
+          lat,
+          lng,
+          ...location
+        })
+        
+        setIsGettingLocation(false)
+      },
+      (error) => {
+        setIsGettingLocation(false)
+        switch(error.code) {
+          case error.PERMISSION_DENIED:
+            alert("Location access denied. Please enable location permissions for this site.")
+            break
+          case error.POSITION_UNAVAILABLE:
+            alert("Location information is unavailable.")
+            break
+          case error.TIMEOUT:
+            alert("The request to get your location timed out.")
+            break
+          default:
+            alert("An unknown error occurred while getting your location.")
+            break
+        }
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0
+      }
+    )
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -90,21 +142,36 @@ export function GpsInput() {
           {/* Left Side: Input and Location Info */}
           <div className="space-y-2">
             {/* Input Section */}
-            <form onSubmit={handleSubmit} className="flex gap-2">
-              <div className="flex-1">
-                <Input
-                  type="text"
-                  placeholder="Enter GPS coordinates (e.g., 37.7749, -122.4194)"
-                  value={coordinates}
-                  onChange={(e) => setCoordinates(e.target.value)}
-                  className="w-full h-9"
-                />
-              </div>
-              <Button type="submit" className="h-9">
-                <MapPin className="mr-2 h-4 w-4" />
-                Submit
-              </Button>
-            </form>
+            <div className="space-y-1">
+              <label className="text-sm font-medium text-gray-700">
+                Enter GPS Coordinates from Google Maps:
+              </label>
+              <form onSubmit={handleSubmit} className="flex gap-2">
+                <Button
+                  type="button"
+                  onClick={getCurrentLocation}
+                  disabled={isGettingLocation}
+                  className="h-9 px-3"
+                  variant="outline"
+                  title="Get current location"
+                >
+                  <Compass className={`h-4 w-4 ${isGettingLocation ? 'animate-pulse' : ''}`} />
+                </Button>
+                <div className="flex-1">
+                  <Input
+                    type="text"
+                    placeholder="Enter GPS coordinates (e.g., 37.7749, -122.4194)"
+                    value={coordinates}
+                    onChange={(e) => setCoordinates(e.target.value)}
+                    className="w-full h-9"
+                  />
+                </div>
+                <Button type="submit" className="h-9">
+                  <MapPin className="mr-2 h-4 w-4" />
+                  Submit
+                </Button>
+              </form>
+            </div>
 
             {/* Location Summary Below Input */}
             {coordinateInfo ? (
