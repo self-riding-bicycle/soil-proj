@@ -3,6 +3,8 @@
 import { useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 import { CheckCircle2, XCircle, MapPin } from "lucide-react"
 import { useLocation } from "@/contexts/location-context"
 
@@ -247,7 +249,220 @@ export function MainTabs() {
         
         <TabsContent value="upload" className="mt-6">
           <div className="rounded-lg border p-6 min-h-[400px]">
-            {/* Upload Data tab content - currently blank */}
+            {coordinateInfo ? (
+              <div className="space-y-6">
+                {/* Location Display */}
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <MapPin className="h-5 w-5 text-gray-600" />
+                    <h3 className="font-semibold">Field Location</h3>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-gray-600">Latitude: </span>
+                      <span className="font-medium">{coordinateInfo.lat.toFixed(6)}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Longitude: </span>
+                      <span className="font-medium">{coordinateInfo.lng.toFixed(6)}</span>
+                    </div>
+                    <div className="col-span-2">
+                      <span className="text-gray-600">Location: </span>
+                      <span className="font-medium">
+                        {[
+                          coordinateInfo.city,
+                          coordinateInfo.region,
+                          coordinateInfo.state,
+                          coordinateInfo.country
+                        ].filter(Boolean).join(", ")}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Upload Form */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Upload Soil Analysis Data</h3>
+                  
+                  <form className="space-y-4" onSubmit={(e) => {
+                    e.preventDefault()
+                    // TODO: Handle form submission
+                    console.log('Form submitted')
+                  }}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Total Organic Carbon */}
+                      <div>
+                        <label htmlFor="toc" className="block text-sm font-medium text-gray-700 mb-1">
+                          Total Organic Carbon (TOC) %
+                        </label>
+                        <Input
+                          type="number"
+                          id="toc"
+                          step="0.01"
+                          placeholder="e.g., 2.34"
+                          className="w-full"
+                        />
+                      </div>
+
+                      {/* Active Carbon */}
+                      <div>
+                        <label htmlFor="activeCarbon" className="block text-sm font-medium text-gray-700 mb-1">
+                          Active Carbon (ppm)
+                        </label>
+                        <Input
+                          type="number"
+                          id="activeCarbon"
+                          placeholder="e.g., 485"
+                          className="w-full"
+                        />
+                      </div>
+
+                      {/* Soil Organic Matter */}
+                      <div>
+                        <label htmlFor="som" className="block text-sm font-medium text-gray-700 mb-1">
+                          Soil Organic Matter (SOM) %
+                        </label>
+                        <Input
+                          type="number"
+                          id="som"
+                          step="0.01"
+                          placeholder="e.g., 4.03"
+                          className="w-full"
+                        />
+                      </div>
+
+                      {/* pH */}
+                      <div>
+                        <label htmlFor="ph" className="block text-sm font-medium text-gray-700 mb-1">
+                          pH
+                        </label>
+                        <Input
+                          type="number"
+                          id="ph"
+                          step="0.1"
+                          min="0"
+                          max="14"
+                          placeholder="e.g., 6.5"
+                          className="w-full"
+                        />
+                      </div>
+
+                      {/* Nitrogen */}
+                      <div>
+                        <label htmlFor="nitrogen" className="block text-sm font-medium text-gray-700 mb-1">
+                          Total Nitrogen (%)
+                        </label>
+                        <Input
+                          type="number"
+                          id="nitrogen"
+                          step="0.001"
+                          placeholder="e.g., 0.23"
+                          className="w-full"
+                        />
+                      </div>
+
+                      {/* Phosphorus */}
+                      <div>
+                        <label htmlFor="phosphorus" className="block text-sm font-medium text-gray-700 mb-1">
+                          Available Phosphorus (ppm)
+                        </label>
+                        <Input
+                          type="number"
+                          id="phosphorus"
+                          placeholder="e.g., 45"
+                          className="w-full"
+                        />
+                      </div>
+
+                      {/* Potassium */}
+                      <div>
+                        <label htmlFor="potassium" className="block text-sm font-medium text-gray-700 mb-1">
+                          Available Potassium (ppm)
+                        </label>
+                        <Input
+                          type="number"
+                          id="potassium"
+                          placeholder="e.g., 180"
+                          className="w-full"
+                        />
+                      </div>
+
+                      {/* CEC */}
+                      <div>
+                        <label htmlFor="cec" className="block text-sm font-medium text-gray-700 mb-1">
+                          Cation Exchange Capacity (meq/100g)
+                        </label>
+                        <Input
+                          type="number"
+                          id="cec"
+                          step="0.1"
+                          placeholder="e.g., 12.5"
+                          className="w-full"
+                        />
+                      </div>
+
+                      {/* Bulk Density */}
+                      <div>
+                        <label htmlFor="bulkDensity" className="block text-sm font-medium text-gray-700 mb-1">
+                          Bulk Density (g/cm³)
+                        </label>
+                        <Input
+                          type="number"
+                          id="bulkDensity"
+                          step="0.01"
+                          placeholder="e.g., 1.35"
+                          className="w-full"
+                        />
+                      </div>
+
+                      {/* Moisture Content */}
+                      <div>
+                        <label htmlFor="moisture" className="block text-sm font-medium text-gray-700 mb-1">
+                          Moisture Content (%)
+                        </label>
+                        <Input
+                          type="number"
+                          id="moisture"
+                          step="0.1"
+                          placeholder="e.g., 22.5"
+                          className="w-full"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Notes/Comments */}
+                    <div>
+                      <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-1">
+                        Additional Notes (Optional)
+                      </label>
+                      <textarea
+                        id="notes"
+                        rows={3}
+                        className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Any additional observations or testing methods used..."
+                      />
+                    </div>
+
+                    {/* Submit Button */}
+                    <div className="flex justify-end pt-4">
+                      <Button type="submit" className="px-6">
+                        Submit Data
+                      </Button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center justify-center h-full min-h-[300px]">
+                <div className="text-center">
+                  <MapPin className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">No Location Selected</h3>
+                  <p className="text-sm text-gray-600 max-w-sm">
+                    Enter GPS coordinates in the field above to upload soil data for your location
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </TabsContent>
         
